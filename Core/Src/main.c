@@ -17,6 +17,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <stdio.h>
 #include "main.h"
 #include "quadspi.h"
 #include "usart.h"
@@ -96,28 +97,41 @@ int main(void) {
     MX_USART1_UART_Init();
     /* USER CODE BEGIN 2 */
     QSPI_W25Qxx_Init();
-    QSPI_W25Qxx_MemoryMappedMode();
-    HAL_MPU_Disable();
+    uint32_t a = QSPI_W25Qxx_ReadID();
+    printf("%d",a);
 
 
-    SysTick->CTRL = 0;        // 关闭SysTick
-    SysTick->LOAD = 0;        // 清零重载值
-    SysTick->VAL = 0;            // 清零计数值
 
-    JumpToApplication = (pFunction) (*(__IO uint32_t *) (W25Qxx_Mem_Addr + 4));    // 设置起始地址
-    __set_MSP(*(__IO uint32_t *) W25Qxx_Mem_Addr);    // 设置主堆栈指针
-
-    JumpToApplication();            // 执行跳转
     /* USER CODE END 2 */
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
     while (1) {
-//        HAL_GPIO_TogglePin(LED_Blue_GPIO_Port, LED_Blue_Pin);
-//        HAL_Delay(100);
+
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
+        if (HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13)==GPIO_PIN_RESET){     //检测按键是否按下，若按下，则跳转启动flash的程序
+
+
+
+            QSPI_W25Qxx_MemoryMappedMode();
+
+//            HAL_Delay(5000);
+            HAL_MPU_Disable();
+
+
+            SysTick->CTRL = 0;        // 关闭SysTick
+            SysTick->LOAD = 0;        // 清零重载值
+            SysTick->VAL = 0;            // 清零计数值
+
+            JumpToApplication = (pFunction) (*(__IO uint32_t *) (W25Qxx_Mem_Addr + 4));    // 设置起始地址
+            __set_MSP(*(__IO uint32_t *) W25Qxx_Mem_Addr);    // 设置主堆栈指针
+
+            JumpToApplication();            // 执行跳转
+
+
+        }
     }
     /* USER CODE END 3 */
 }
