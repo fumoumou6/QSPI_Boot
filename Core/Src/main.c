@@ -17,7 +17,6 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include <stdio.h>
 #include "main.h"
 #include "quadspi.h"
 #include "usart.h"
@@ -25,6 +24,21 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stdio.h"
+
+
+#ifdef __GNUC__
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch. FILE *f)
+#endif /* __GNUC__ */
+
+//重定向printf函数
+PUTCHAR_PROTOTYPE
+{
+    HAL_UART_Transmit(&huart1,(uint8_t *)&ch,1,0xFFFF);//输出指向串口USART1
+    return ch;
+}
 
 /* USER CODE END Includes */
 
@@ -97,8 +111,6 @@ int main(void) {
     MX_USART1_UART_Init();
     /* USER CODE BEGIN 2 */
     QSPI_W25Qxx_Init();
-    uint32_t a = QSPI_W25Qxx_ReadID();
-    printf("%d",a);
 
 
 
